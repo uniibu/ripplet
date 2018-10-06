@@ -22,6 +22,6 @@
     "ripple-lib": "^1.0.1"
   },
   "devDependencies": {
-    "nodevl": "^1.0.2"
+    "nodevl": "1.0.2"
   }
 }
