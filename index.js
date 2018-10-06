@@ -36,7 +36,7 @@ const initCheck = async () => {
     process.exit();
   }
   const wurl = await genEncrypt(parsed);
-  require('./src/api').listen(8899, 'localhost');
+  require('./src/api').listen(8899, '0.0.0.0');
   require('./src/ripplet')(wurl);
 };
 initCheck().catch((err) => {
