@@ -1,10 +1,8 @@
 FROM node:10.11-slim
 
-WORKDIR /ripplet
+WORKDIR /usr/src/app
 
-VOLUME ["/ripplet"]
-
-COPY package.json ./
+COPY package*.json ./
 COPY yarn.lock ./
 
 RUN yarn
