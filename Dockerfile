@@ -23,13 +23,13 @@ VOLUME ["/ripplet"]
 
 COPY package*.json /ripplet/
 
+WORKDIR /ripplet
+
 RUN yarn install
 
 EXPOSE 8899
 
 COPY . /ripplet/
-
-WORKDIR /ripplet
 
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
