@@ -19,9 +19,6 @@ ENV YARN_VERSION 1.9.4
 
 RUN npm install yarn -g
 
-ADD ./bin /usr/local/bin
-RUN chmod +x /usr/local/bin/xrp_oneshot
-
 VOLUME ["/ripplet"]
 
 COPY package*.json /ripplet/
@@ -38,4 +35,4 @@ COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD [ "xrp_oneshot" ]
+CMD [ "yarn", "start" ]
