@@ -21,7 +21,8 @@ RUN npm install yarn -g
 
 VOLUME ["/ripplet"]
 
-COPY package*.json /ripplet/
+COPY package.json /ripplet/
+COPY yarn.lock /ripplet/
 
 WORKDIR /ripplet
 
