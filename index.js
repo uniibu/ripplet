@@ -2,7 +2,6 @@ const fs = require('fs-extra');
 if (!fs.existsSync('./config.json')) {
   fs.outputJsonSync('./config.json', {});
 }
-const server = require('./src/api');
 const { parseEnv, genCode, crypt, getPubIp, isHex, jsonToEnv } = require('./src/helpers');
 const genEncrypt = async (parsed) => {
   if (!isHex(parsed.secret)) {
@@ -37,7 +36,7 @@ const initCheck = async () => {
     process.exit();
   }
   const wurl = await genEncrypt(parsed);
-  server.listen(8899, 'localhost');
+  require('./src/api').listen(8899, 'localhost');
   require('./src/ripplet')(wurl);
 };
 initCheck().catch((err) => {
