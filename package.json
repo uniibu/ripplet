@@ -1,0 +1,27 @@
+{
+  "name": "ripplet",
+  "version": "1.0.0",
+  "description": "simple ripple wallet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodevl index.js"
+  },
+  "author": "unibtc@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "big.js": "^5.1.2",
+    "boxen": "^2.0.0",
+    "fs-extra": "^7.0.0",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-bouncer": "^6.0.4",
+    "koa-router": "^7.4.0",
+    "needle": "^2.2.4",
+    "ripple-keypairs": "^0.10.1",
+    "ripple-lib": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodevl": "^1.0.2"
+  }
+}

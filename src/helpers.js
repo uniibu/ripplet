@@ -1,0 +1,105 @@
+const crypto = require('crypto');
+const needle = require('needle');
+const Big = require('big.js');
+const keypairs = require('ripple-keypairs');
+const pkgjson = require('../package.json');
+needle.defaults({
+  user_agent: `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)}/${pkgjson.version} (Node.js ${process.version})`
+});
+function getConf() {
+  delete require.cache[require.resolve('../config.json')];
+  return require('../config.json');
+}
+
+function isPlainObject(input) {
+  return input && !Array.isArray(input) && typeof input === 'object';
+}
+const truncateSix = exports.truncateSix = num => {
+  const numPower = 10 ** 6;
+  return ~~(num * numPower) / numPower;
+};
+
+exports.getPackage = function(){
+  return `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
+};
+exports.parseEnv = envstr => {
+  const result = {};
+  const lines = envstr.toString().split('\n');
+  for (const line of lines) {
+    const match = line.match(/^([^=:#]+?)[=:](.*)/);
+    if (match) {
+      const key = match[1].trim();
+      const value = match[2].trim();
+      result[key] = ['secret', 'key', 'notify'].includes(key) ? value : value.split(',');
+    }
+  }
+  return result;
+};
+exports.genCode = () => crypto.randomBytes(8).toString('hex');
+const crypt = {
+  'encrypt': function (secret, key) {
+    const cipher = crypto.createCipher('aes-256-cbc', key);
+    let crypted = cipher.update(secret, 'utf-8', 'hex');
+    crypted += cipher.final('hex');
+    return crypted;
+  },
+  'decrypt': function (encrypted, key) {
+    try {
+      const decipher = crypto.createDecipher('aes-256-cbc', key);
+      let decrypted = decipher.update(encrypted, 'hex', 'utf-8');
+      decrypted += decipher.final('utf-8');
+      return decrypted;
+    } catch (e) {
+      return false;
+    }
+  }
+};
+exports.crypt = crypt;
+exports.getPubIp = async () => {
+  const ip = await needle('get', 'https://btslr.co/ip');
+  return ip.body;
+};
+exports.isHex = str => !isNaN(parseInt(str, 16));
+exports.jsonToEnv = obj => {
+  if (!isPlainObject(obj)) {
+    return '';
+  }
+  let envstr = '';
+  for (let [k, v] of Object.entries(obj)) {
+    if (Array.isArray(v)) {
+      v = v.join(',');
+    }
+    envstr += `${k}=${v}\n`;
+  }
+  return envstr;
+};
+exports.conf = getConf;
+exports.checkip = ip => {
+  const config = getConf();
+  if (!config.ip_lock || config.ip_lock == '*') {
+    return true;
+  }
+  return config.ip_lock.includes(ip);
+};
+exports.notify = async (amount, dtag, txid) => {
+  const config = getConf();
+  const r = await needle('post', config.notify, { amount, dtag, txid }, { json: true });
+  return r.body;
+};
+exports.getAddress = () => {
+  const config = getConf();
+  const secret = crypt.decrypt(config.secret, config.key);
+  const kp = keypairs.deriveKeypair(secret);
+  return keypairs.deriveAddress(kp.publicKey);
+};
+exports.dropsToXrp = drops => {
+  const amt = new Big(drops);
+  return amt.times(0.000001).toString();
+};
+exports.calcAfterBal = (amount, fee, currbal) => {
+  let amt = new Big(amount);
+  currbal = new Big(currbal);
+  amt = amt.plus(fee);
+  const left = currbal.minus(amt).toString();
+  return truncateSix(left);
+};
