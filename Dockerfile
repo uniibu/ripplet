@@ -7,7 +7,7 @@ VOLUME ["/ripplet"]
 COPY package.json ./
 COPY yarn.lock ./
 
-RUN yarn install
+RUN yarn
 COPY . .
 
 EXPOSE 8899
