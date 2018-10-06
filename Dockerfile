@@ -1,4 +1,4 @@
-FROM NODE:10.11-slim
+FROM node:10.11-slim
 
 WORKDIR /ripplet
 
