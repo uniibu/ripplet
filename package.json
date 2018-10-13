@@ -19,7 +19,6 @@
     "koa-bouncer": "^6.0.4",
     "koa-router": "^7.4.0",
     "lowdb": "^1.0.0",
-    "mongoose": "^5.3.2",
     "needle": "^2.2.4",
     "promise-retry": "^1.1.1",
     "queuing": "^1.2.0",
