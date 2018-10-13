@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const needle = require('needle');
 const Big = require('big.js');
+var queue = require('queuing');
+var q = queue({ autostart:true,retry:true,concurrency:1,delay:5000 });
 const keypairs = require('ripple-keypairs');
 const pkgjson = require('../package.json');
 needle.defaults({
@@ -81,10 +83,25 @@ exports.checkip = ip => {
   }
   return config.ip_lock.includes(ip);
 };
-exports.notify = async (amount, dtag, txid) => {
+const sendnotify = async (txobj) => {
   const config = getConf();
-  const r = await needle('post', config.notify, { amount, dtag, txid }, { json: true });
-  return r.body;
+  const r = await needle('post', config.notify, txobj, { json: true });
+  return r;
+};
+exports.notify = async function(txobj){
+  q.push(async function(cb){
+    try{
+      const r = await sendnotify(txobj);
+      if(r.statusCode !== 200){
+        console.error('retrying failed notification tx', txobj);
+        return cb(r);
+      }
+      cb();
+    }catch(e){
+      console.error('retrying failed notification tx', txobj);
+      cb(e);
+    }
+  });
 };
 exports.getAddress = () => {
   const config = getConf();
