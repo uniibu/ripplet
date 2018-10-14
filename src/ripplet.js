@@ -6,6 +6,10 @@ module.exports = async (wurl) => {
   console.log(boxen(`${`${getPackage()}\n`}Withdraw Callback Url: ${`${wurl}\n`}Wallet Address: ${account}`, { padding: 1, margin: 1, borderStyle: 'double' }));
   ripple.connect();
 };
+module.exports.balance = async () => {
+  const balances = await ripple.api.getBalances(account);
+  return balances.find((o) => o.currency == 'XRP');
+};
 module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};

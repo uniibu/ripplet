@@ -1,8 +1,8 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
-const { isHex, truncateSix, getKeyPairs } = require('./helpers.js');
-const { withdraw } = require('./ripplet');
+const { validateKey, truncateSix, getKeyPairs } = require('./helpers.js');
+const { withdraw, balance } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
 const router = new Router();
@@ -29,23 +29,28 @@ app.use(async (ctx, next) => {
     }
   }
 });
-
+router.use(async (ctx, next) => {
+  ctx.validateQuery('key').required('Missing key').isString().trim();
+  if (!validateKey(ctx.vals.key)) {
+    return ctx.throw(403, 'Forbidden');
+  }
+  await next();
+});
+router.get('/balance', async ctx => {
+  const bal = await balance();
+  ctx.body = { success: true, balance: bal };
+});
 router.post('/withdraw', async (ctx) => {
   if (busy.get()) {
     ctx.body = { success: false, error: 'busy' };
     return;
   }
   busy.set(true);
-  ctx.validateQuery('key').required('Missing key').isString().trim();
   ctx.validateBody('amount').required('Missing amount').toDecimal('Invalid amount').tap(n => truncateSix(n));
   ctx.validateBody('address').required('Missing address').isString().trim();
   ctx.validateBody('dtag').optional().toInt('Invalid dtag');
   ctx.check(ctx.vals.amount, 'Invalid amount');
   ctx.check(ctx.vals.address, 'Invalid address');
-  ctx.check(ctx.vals.key, 'Invalid key');
-  if (!ctx.vals.key || !isHex(ctx.vals.key)) {
-    ctx.throw(403, 'Forbidden key');
-  }
   const keypairs = getKeyPairs();
   if (!keypairs.privateKey) {
     ctx.throw(403, 'Forbidden seed');

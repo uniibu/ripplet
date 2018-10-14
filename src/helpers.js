@@ -3,13 +3,14 @@ const needle = require('needle');
 const Big = require('big.js');
 const elliptic = require('elliptic');
 const Secp256k1 = elliptic.ec('secp256k1');
-var queue = require('queuing');
-var q = queue({ autostart:true,retry:true,concurrency:1,delay:5000 });
+const queue = require('queuing');
+const q = queue({ autostart: true, retry: true, concurrency: 1, delay: 5000 });
 const keypairs = require('ripple-keypairs');
 const pkgjson = require('../package.json');
 needle.defaults({
   user_agent: `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)}/${pkgjson.version} (Node.js ${process.version})`
 });
+
 function getConf() {
   delete require.cache[require.resolve('../config.json')];
   return require('../config.json');
@@ -22,15 +23,14 @@ const truncateSix = exports.truncateSix = num => {
   const numPower = 10 ** 6;
   return ~~(num * numPower) / numPower;
 };
+
 function bytesToHex(a) {
-  return a.map(function(byteValue) {
+  return a.map(byteValue => {
     const hex = byteValue.toString(16).toUpperCase();
-    return hex.length > 1 ? hex : '0' + hex;
+    return hex.length > 1 ? hex : `0${hex}`;
   }).join('');
 }
-exports.getPackage = function(){
-  return `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
-};
+exports.getPackage = () => `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
 exports.parseEnv = envstr => {
   const result = {};
   const lines = envstr.toString().split('\n');
@@ -83,37 +83,39 @@ exports.jsonToEnv = obj => {
   return envstr;
 };
 exports.conf = getConf;
-
 const sendnotify = async (txobj) => {
   const config = getConf();
   const r = await needle('post', config.notify, txobj, { json: true });
   return r;
 };
-
-exports.notify = async function(txobj){
-  q.push(async function(cb){
-    try{
+exports.notify = async txobj => {
+  q.push(async cb => {
+    try {
       const r = await sendnotify(txobj);
-      if(r.statusCode !== 200){
+      if (r.statusCode !== 200) {
         console.error('retrying failed notification tx', txobj);
         return cb(r);
       }
       cb();
-    }catch(e){
+    } catch (e) {
       console.error('retrying failed notification tx', txobj);
       cb(e);
     }
   });
 };
-exports.getKeyPairs = function(){
+exports.validateKey = key => {
   const config = getConf();
-  const secret = crypt.decrypt(config.secret, config.key);  
+  return key === config.key;
+};
+exports.getKeyPairs = () => {
+  const config = getConf();
+  const secret = crypt.decrypt(config.secret, config.key);
   const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
-  return { privateKey:secret, publicKey:publicKey };
+  return { privateKey: secret, publicKey };
 };
 exports.getAddress = () => {
   const config = getConf();
-  const secret = crypt.decrypt(config.secret, config.key);  
+  const secret = crypt.decrypt(config.secret, config.key);
   const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
   // const kp = keypairs.deriveKeypair(secret);
   return keypairs.deriveAddress(publicKey);
