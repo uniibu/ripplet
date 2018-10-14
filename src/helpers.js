@@ -83,13 +83,7 @@ exports.jsonToEnv = obj => {
   return envstr;
 };
 exports.conf = getConf;
-exports.checkip = ip => {
-  const config = getConf();
-  if (!config.ip_lock || config.ip_lock == '*') {
-    return true;
-  }
-  return config.ip_lock.includes(ip);
-};
+
 const sendnotify = async (txobj) => {
   const config = getConf();
   const r = await needle('post', config.notify, txobj, { json: true });

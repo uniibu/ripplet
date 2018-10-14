@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
-const { isHex, checkip, truncateSix, getKeyPairs } = require('./helpers.js');
+const { isHex, truncateSix, getKeyPairs } = require('./helpers.js');
 const { withdraw } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
@@ -29,12 +29,7 @@ app.use(async (ctx, next) => {
     }
   }
 });
-router.use(async (ctx, next) => {
-  if (!checkip(ctx.ip)) {
-    return ctx.throw(403, `${ctx.ip} is Forbidden`);
-  }
-  await next();
-});
+
 router.post('/withdraw', async (ctx) => {
   if (busy.get()) {
     ctx.body = { success: false, error: 'busy' };

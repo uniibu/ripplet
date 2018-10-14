@@ -8,9 +8,6 @@ const genEncrypt = async (parsed) => {
     parsed.key = parsed.key || genCode();
     parsed.secret = crypt.encrypt('00'+parsed.secret.toUpperCase(), parsed.key);
   }
-  if (!parsed.ip_lock) {
-    parsed.ip_lock = ['*'];
-  }
   await fs.outputJson('./config.json', parsed, { spaces: 2 });
   await fs.writeFile('./xrp.env', jsonToEnv(parsed));
   const pubIp = await getPubIp();
@@ -36,7 +33,7 @@ const initCheck = async () => {
     process.exit();
   }
   const wurl = await genEncrypt(parsed);
-  require('./src/api').listen(8899, '0.0.0.0');
+  require('./src/api').listen(8899);
   require('./src/ripplet')(wurl);
 };
 initCheck().catch((err) => {
