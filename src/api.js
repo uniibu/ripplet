@@ -2,7 +2,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
 const { validateKey, truncateSix, getKeyPairs } = require('./helpers.js');
-const { withdraw, balance } = require('./ripplet');
+const { withdraw, balance, validate, listTx } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
 const router = new Router();
@@ -40,6 +40,18 @@ router.get('/balance', async ctx => {
   const bal = await balance();
   ctx.body = { success: true, balance: bal };
 });
+router.get('/validate', async ctx => {
+  ctx.validateQuery('address').required('Missing address').isString().trim();
+  const validAddress = await validate(ctx.vals.address);
+  ctx.body = { success: validAddress };
+});
+router.get('/gettransactions', async ctx => {
+  ctx.validateQuery('limit').optional();
+  ctx.validateQuery('filter').optional().isIn(['deposit', 'withdraw'], 'Invalid filter');
+  const limit = +ctx.vals.limit || 100;
+  const txs = await listTx(limit, ctx.vals.filter);
+  ctx.body = { success: true, transactions: txs };
+});
 router.post('/withdraw', async (ctx) => {
   if (busy.get()) {
     ctx.body = { success: false, error: 'busy' };
@@ -51,6 +63,8 @@ router.post('/withdraw', async (ctx) => {
   ctx.validateBody('dtag').optional().toInt('Invalid dtag');
   ctx.check(ctx.vals.amount, 'Invalid amount');
   ctx.check(ctx.vals.address, 'Invalid address');
+  const validAddress = await validate(ctx.vals.address);
+  ctx.check(validAddress, 'Inactive address');
   const keypairs = getKeyPairs();
   if (!keypairs.privateKey) {
     ctx.throw(403, 'Forbidden seed');

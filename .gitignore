@@ -1,3 +1,4 @@
 node_modules
 xrp.env
 config.json
+src/db/db.json

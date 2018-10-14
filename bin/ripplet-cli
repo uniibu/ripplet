@@ -1,0 +1,82 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var path = require('path')
+var needle = require('needle')
+var config = require(path.resolve(__dirname,'../config.json'))
+var pkgjson = require(path.resolve(__dirname,'../package.json'))
+
+const parseJson = function(json){
+  json = JSON.stringify(json,null,2);
+  return json.replace(/{|}/g,'').replace(/ {,2}/g,'');
+}
+const reqLocal = async function(route,data){
+  try{
+    let uri = 'http://localhost:8899/'+route+'?key='+config.key;
+    if(data){
+      uri += '&'+data
+    }
+    return await needle('get',uri,{json:true}) 
+  }catch(e){
+    console.error(e)
+  }
+}
+program
+  .version(pkgjson.version)
+  .description('Ripplet Wallet CLI v'+pkgjson.version);
+
+program
+  .command('getBalance')
+  .description('Get current balance of master address')
+  .action(async function () {
+    const r = await reqLocal('balance');
+    if(r.body.success){
+      console.log(r.body.balance.value + ' ' + r.body.balance.currency);
+    }else{
+      console.log('Internal Error')
+    }
+  });
+
+program
+  .command('validateAddress <address>')
+  .description('Validates if an address format is correct and active')
+  .action(async function (address) {
+    const r = await reqLocal('validate','address='+address);
+    if(r.body.success){
+      console.log('Address is valid and active');
+    }else{
+      console.log('Invalid or inactive address')
+    }
+  });
+
+program
+  .command('getTransactions')
+  .description('Returns the last 100 transactions by default of the master address')
+  .option('-l, --limit [number]', 'Number of transactions to return')
+  .option('-f, --filter [deposit|withdraw]', 'Accepts values \'deposit\' or \'withdraw\'')
+  .action(async function (options) {
+    const limit = options.limit || 10;
+    const filter = options.filter;
+    let data = limit ? 'limit='+limit: '';
+    if(filter){
+      const a = 'filter='+filter
+      if(data){
+        data += '&'+a
+      }else{
+        data += a;
+      }
+    }
+    const r = await reqLocal('gettransactions',data);
+    if(r.body.success){
+      console.log(JSON.stringify(r.body.transactions,null,2));
+    }else{
+      console.log('Internal Error')
+    }
+  });
+
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
+
+program.parse(process.argv);

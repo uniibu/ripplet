@@ -10,6 +10,26 @@ module.exports.balance = async () => {
   const balances = await ripple.api.getBalances(account);
   return balances.find((o) => o.currency == 'XRP');
 };
+module.exports.listTx = async (limit = 100, filter) => {
+  const opts = { earliestFirst: false, limit, binary: false };
+  if (filter === 'deposit') {
+    opts.initiated = false;
+  } else if (filter === 'withdraw') {
+    opts.initiaed = true;
+  }
+  const txs = await ripple.api.getTransactions(account, opts);
+  return txs;
+};
+module.exports.validate = async address => {
+  try {
+    const isValid = ripple.api.isValidAddress(address);
+    if (!isValid) return false;
+    await ripple.api.getBalances(account);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};
