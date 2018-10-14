@@ -48,7 +48,7 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     };
     let txr = await ripple.verifyTransaction(id, options);
     if (txr.outcome.result == 'tesSUCCESS') {
-      return [true, txr.id];
+      return [true, { id: txr.id, fee }];
     }
   } catch (e) {
     console.error(e.stack || e.message);
