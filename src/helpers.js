@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const needle = require('needle');
 const Big = require('big.js');
+const elliptic = require('elliptic');
+const Secp256k1 = elliptic.ec('secp256k1');
 var queue = require('queuing');
 var q = queue({ autostart:true,retry:true,concurrency:1,delay:5000 });
 const keypairs = require('ripple-keypairs');
@@ -20,7 +22,12 @@ const truncateSix = exports.truncateSix = num => {
   const numPower = 10 ** 6;
   return ~~(num * numPower) / numPower;
 };
-
+function bytesToHex(a) {
+  return a.map(function(byteValue) {
+    const hex = byteValue.toString(16).toUpperCase();
+    return hex.length > 1 ? hex : '0' + hex;
+  }).join('');
+}
 exports.getPackage = function(){
   return `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
 };
@@ -88,6 +95,7 @@ const sendnotify = async (txobj) => {
   const r = await needle('post', config.notify, txobj, { json: true });
   return r;
 };
+
 exports.notify = async function(txobj){
   q.push(async function(cb){
     try{
@@ -103,11 +111,18 @@ exports.notify = async function(txobj){
     }
   });
 };
+exports.getKeyPairs = function(){
+  const config = getConf();
+  const secret = crypt.decrypt(config.secret, config.key);  
+  const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
+  return { privateKey:secret, publicKey:publicKey };
+};
 exports.getAddress = () => {
   const config = getConf();
-  const secret = crypt.decrypt(config.secret, config.key);
-  const kp = keypairs.deriveKeypair(secret);
-  return keypairs.deriveAddress(kp.publicKey);
+  const secret = crypt.decrypt(config.secret, config.key);  
+  const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
+  // const kp = keypairs.deriveKeypair(secret);
+  return keypairs.deriveAddress(publicKey);
 };
 exports.dropsToXrp = drops => {
   const amt = new Big(drops);

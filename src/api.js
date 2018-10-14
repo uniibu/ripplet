@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
-const { isHex, crypt, checkip, conf, truncateSix } = require('./helpers.js');
+const { isHex, checkip, truncateSix, getKeyPairs } = require('./helpers.js');
 const { withdraw } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
@@ -41,7 +41,6 @@ router.post('/withdraw', async (ctx) => {
     return;
   }
   busy.set(true);
-  const config = conf();
   ctx.validateQuery('key').required('Missing key').isString().trim();
   ctx.validateBody('amount').required('Missing amount').toDecimal('Invalid amount').tap(n => truncateSix(n));
   ctx.validateBody('address').required('Missing address').isString().trim();
@@ -52,11 +51,11 @@ router.post('/withdraw', async (ctx) => {
   if (!ctx.vals.key || !isHex(ctx.vals.key)) {
     ctx.throw(403, 'Forbidden key');
   }
-  const seed = crypt.decrypt(config.secret, ctx.vals.key);
-  if (!seed) {
+  const keypairs = getKeyPairs();
+  if (!keypairs.privateKey) {
     ctx.throw(403, 'Forbidden seed');
   }
-  const [result, data] = await withdraw(seed, ctx.vals.amount, ctx.vals.address, ctx.vals.dtag);
+  const [result, data] = await withdraw(keypairs, ctx.vals.amount, ctx.vals.address, ctx.vals.dtag);
   const payload = { success: result };
   if (!result) {
     payload.error = data;

@@ -4,9 +4,9 @@ if (!fs.existsSync('./config.json')) {
 }
 const { parseEnv, genCode, crypt, getPubIp, isHex, jsonToEnv } = require('./src/helpers');
 const genEncrypt = async (parsed) => {
-  if (!isHex(parsed.secret)) {
+  if (isHex(parsed.secret) && parsed.secret.length == 64) {
     parsed.key = parsed.key || genCode();
-    parsed.secret = crypt.encrypt(parsed.secret, parsed.key);
+    parsed.secret = crypt.encrypt('00'+parsed.secret.toUpperCase(), parsed.key);
   }
   if (!parsed.ip_lock) {
     parsed.ip_lock = ['*'];

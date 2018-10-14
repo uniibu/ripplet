@@ -49,8 +49,8 @@ exports._bootstrap = (api) => {
       descending: true
     }));
   });
-  api.connection.on('transaction', (t) => {
-    if (t.transaction.TransactionType === 'Payment' && t.meta.TransactionResult === 'tesSUCCESS') {
+  api.connection.on('transaction', (t) => {    
+    if (t.transaction.TransactionType === 'Payment' && t.meta.TransactionResult === 'tesSUCCESS' && t.status === 'closed' && wallets.includes(t.transaction.Destination) && t.validated) {
       const tx = t.transaction;
       tx.ledger_index = t.ledger_index;     
       _storeTransaction(tx);

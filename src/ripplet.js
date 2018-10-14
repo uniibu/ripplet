@@ -6,7 +6,7 @@ module.exports = async (wurl) => {
   console.log(boxen(`${`${getPackage()}\n`}Withdraw Callback Url: ${`${wurl}\n`}Wallet Address: ${account}`, { padding: 1, margin: 1, borderStyle: 'double' }));
   ripple.connect();
 };
-module.exports.withdraw = async (secret, amount, address, dtag = 0) => {
+module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};
     instructions.maxLedgerVersionOffset = 5;
@@ -36,7 +36,7 @@ module.exports.withdraw = async (secret, amount, address, dtag = 0) => {
     };
     const prepared = await ripple.api.preparePayment(account, payment, instructions);
     const ledger = await ripple.api.getLedger();
-    const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, secret);
+    const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, keypairs);
     await ripple.api.submit(signedTransaction);
     const options = {
       minLedgerVersion: ledger.ledgerVersion,
