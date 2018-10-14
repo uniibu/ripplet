@@ -28,7 +28,7 @@ docker run -v ripplet-data:/usr/src/app --name=ripplet -d \
       -p 8899:8899 \
       -v $HOME/.ripplet/xrp.env:/usr/src/app/xrp.env \
       unibtc/ripplet:latest
-``
+```
 
 Check Logs to view your withdrawal url
 ```
@@ -37,5 +37,5 @@ docker logs ripplet
 
 Auto Installation
 ```
-sudo bash -c "$(curl -L https://git.io/fxRPB)"
+sudo bash -c "$(curl -L https://git.io/fxRpw)"
 ```
