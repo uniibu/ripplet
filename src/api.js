@@ -75,7 +75,7 @@ router.post('/withdraw', async (ctx) => {
     payload.error = data;
   } else {
     payload.txid = data.id;
-    payload.fee = data.fee;
+    payload.fee = data.fee.toFixed(6);
   }
   busy.set(false);
   ctx.body = payload;
