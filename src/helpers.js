@@ -19,7 +19,7 @@ function getConf() {
 function isPlainObject(input) {
   return input && !Array.isArray(input) && typeof input === 'object';
 }
-const truncateSix = exports.truncateSix = num => {
+const truncateSix = num => {
   const numPower = 10 ** 6;
   return ~~(num * numPower) / numPower;
 };
@@ -30,8 +30,8 @@ function bytesToHex(a) {
     return hex.length > 1 ? hex : `0${hex}`;
   }).join('');
 }
-exports.getPackage = () => `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
-exports.parseEnv = envstr => {
+const getPackage = () => `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
+const parseEnv = envstr => {
   const result = {};
   const lines = envstr.toString().split('\n');
   for (const line of lines) {
@@ -44,7 +44,7 @@ exports.parseEnv = envstr => {
   }
   return result;
 };
-exports.genCode = () => crypto.randomBytes(8).toString('hex');
+const genCode = () => crypto.randomBytes(8).toString('hex');
 const crypt = {
   'encrypt': function (secret, key) {
     const cipher = crypto.createCipher('aes-256-cbc', key);
@@ -63,13 +63,12 @@ const crypt = {
     }
   }
 };
-exports.crypt = crypt;
-exports.getPubIp = async () => {
+const getPubIp = async () => {
   const ip = await needle('get', 'https://btslr.co/ip');
   return ip.body;
 };
-exports.isHex = str => !isNaN(parseInt(str, 16));
-exports.jsonToEnv = obj => {
+const isHex = str => !isNaN(parseInt(str, 16));
+const jsonToEnv = obj => {
   if (!isPlainObject(obj)) {
     return '';
   }
@@ -82,13 +81,12 @@ exports.jsonToEnv = obj => {
   }
   return envstr;
 };
-exports.conf = getConf;
 const sendnotify = async (txobj) => {
   const config = getConf();
   const r = await needle('post', config.notify, txobj, { json: true });
   return r;
 };
-exports.notify = async txobj => {
+const notify = async txobj => {
   q.push(async cb => {
     try {
       const r = await sendnotify(txobj);
@@ -103,31 +101,51 @@ exports.notify = async txobj => {
     }
   });
 };
-exports.validateKey = key => {
+const validateKey = key => {
   const config = getConf();
   return key === config.key;
 };
-exports.getKeyPairs = () => {
+const getKeyPairs = () => {
   const config = getConf();
   const secret = crypt.decrypt(config.secret, config.key);
   const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
   return { privateKey: secret, publicKey };
 };
-exports.getAddress = () => {
-  const config = getConf();
-  const secret = crypt.decrypt(config.secret, config.key);
-  const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
-  // const kp = keypairs.deriveKeypair(secret);
-  return keypairs.deriveAddress(publicKey);
+const getAddress = () => {
+  const { publicKey } = getKeyPairs();
+  const address = keypairs.deriveAddress(publicKey);
+  return address;
 };
-exports.dropsToXrp = drops => {
+const dropsToXrp = drops => {
   const amt = new Big(drops);
   return amt.times(0.000001).toString();
 };
-exports.calcAfterBal = (amount, fee, currbal) => {
+const calcAfterBal = (amount, fee, currbal) => {
   let amt = new Big(amount);
   currbal = new Big(currbal);
   amt = amt.plus(fee);
   const left = currbal.minus(amt).toString();
   return truncateSix(left);
+};
+const getMaxFee = () => {
+  const config = getConf();
+  return config.maxfee;
+};
+module.exports = {
+  truncateSix,
+  getPackage,
+  parseEnv,
+  genCode,
+  crypt,
+  getPubIp,
+  isHex,
+  jsonToEnv,
+  conf: getConf,
+  notify,
+  validateKey,
+  getKeyPairs,
+  getAddress,
+  dropsToXrp,
+  calcAfterBal,
+  getMaxFee
 };

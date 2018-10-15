@@ -1,7 +1,6 @@
 const RippleAPI = require('ripple-lib').RippleAPI;
 const promiseRetry = require('promise-retry');
 const { _lastClosedLedger, _bootstrap } = require('./bootstrap');
-
 const listServers = ['wss://s2.ripple.com:443', 'wss://s-west.ripple.com:443', 'wss://s-east.ripple.com:443', 'wss://s1.ripple.com:443'];
 let api = exports.api = new RippleAPI({ server: listServers[0] });
 exports.connect = () => {
@@ -22,6 +21,7 @@ exports.connect = () => {
     api.getServerInfo().then(server => {
       _lastClosedLedger(server.validatedLedger.ledgerVersion);
       _bootstrap(api);
+      console.log('Syncing...');
     });
   }).catch(console.error);
 };

@@ -6,7 +6,12 @@ const { parseEnv, genCode, crypt, getPubIp, isHex, jsonToEnv } = require('./src/
 const genEncrypt = async (parsed) => {
   if (isHex(parsed.secret) && parsed.secret.length == 64) {
     parsed.key = parsed.key || genCode();
-    parsed.secret = crypt.encrypt('00'+parsed.secret.toUpperCase(), parsed.key);
+    parsed.secret = crypt.encrypt(`00${parsed.secret.toUpperCase()}`, parsed.key);
+  }
+  if (parsed.maxfee) {
+    parsed.maxfee = +parsed.maxfee;
+  } else {
+    parsed.maxfee = 0.000012;
   }
   await fs.outputJson('./config.json', parsed, { spaces: 2 });
   await fs.writeFile('./xrp.env', jsonToEnv(parsed));
@@ -32,9 +37,13 @@ const initCheck = async () => {
     console.error('Error: Invalid Environment file, missing key! Exiting...');
     process.exit();
   }
+  if (parsed.maxfee && +parsed.maxfee < 0.000012) {
+    console.error('Error: Invalid Environment file, maxfee must be atleast 0.000012! Exiting...');
+    process.exit();
+  }
   const wurl = await genEncrypt(parsed);
   require('./src/api').listen(8899);
-  require('./src/ripplet')(wurl);
+  require('./src/ripplet')(wurl, parsed.key);
 };
 initCheck().catch((err) => {
   console.error(err);

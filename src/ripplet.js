@@ -1,9 +1,14 @@
 const ripple = require('./ripple');
 const boxen = require('boxen');
-const { getAddress, calcAfterBal, getPackage } = require('./helpers');
+const { getLedger } = require('./db');
+const { getAddress, calcAfterBal, getPackage, getMaxFee } = require('./helpers');
 const account = getAddress();
-module.exports = async (wurl) => {
-  console.log(boxen(`${`${getPackage()}\n`}Withdraw Callback Url: ${`${wurl}\n`}Wallet Address: ${account}`, { padding: 1, margin: 1, borderStyle: 'double' }));
+module.exports = async (wurl, key) => {
+  console.log(boxen(`${getPackage()}
+  Withdraw Callback Url: ${wurl}
+  Wallet Address: ${account}
+  Key: ${key}
+  Last Synced Ledger: ${getLedger()}`.replace(/ {2,}/g, ''), { padding: 1, margin: 1, borderStyle: 'double' }));
   ripple.connect();
 };
 module.exports.balance = async () => {
@@ -34,13 +39,19 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};
     instructions.maxLedgerVersionOffset = 5;
-    const fee = await ripple.api.getFee();
+    let fee = +(await ripple.api.getFee());
+    console.log('network fee', fee);
+    const maxFee = getMaxFee();
+    if (maxFee) {
+      fee = fee >= maxFee ? maxFee : fee;
+    }
     const balances = await ripple.api.getBalances(account);
     const xrpbal = balances.find((o) => o.currency == 'XRP');
     const balAfter = calcAfterBal(amount, fee, xrpbal.value);
     if (balAfter < 20) {
       return [false, 'insufficient_balance'];
     }
+    instructions.fee = fee.toString();
     const payment = {
       source: {
         address: account,
@@ -58,6 +69,7 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
         tag: dtag
       }
     };
+    console.log('sending withdrawal', address, `${amount} XRP`);
     const prepared = await ripple.api.preparePayment(account, payment, instructions);
     const ledger = await ripple.api.getLedger();
     const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, keypairs);
@@ -68,7 +80,11 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     };
     let txr = await ripple.verifyTransaction(id, options);
     if (txr.outcome.result == 'tesSUCCESS') {
+      console.log('withdrawal success', txr.id);
       return [true, { id: txr.id, fee }];
+    } else {
+      console.log('withdrawal failed to validate within 5 blocks', txr.id);
+      return [false, 'withdrawal failed to validate within 5 blocks'];
     }
   } catch (e) {
     console.error(e.stack || e.message);

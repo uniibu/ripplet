@@ -1,6 +1,6 @@
 {
   "name": "ripplet",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "simple ripple wallet",
   "main": "index.js",
   "bin": {
