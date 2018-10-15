@@ -40,7 +40,6 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     const instructions = {};
     instructions.maxLedgerVersionOffset = 5;
     let fee = +(await ripple.api.getFee());
-    console.log('network fee', fee);
     const maxFee = getMaxFee();
     if (maxFee) {
       fee = fee >= maxFee ? maxFee : fee;
