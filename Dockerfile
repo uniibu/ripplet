@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY yarn.lock ./
 
-RUN yarn
+RUN yarn install --prod
 COPY . .
 RUN chmod +x /usr/src/app/bin/ripplet-cli && ln -s /usr/src/app/bin/ripplet-cli /usr/bin/
 EXPOSE 8899
