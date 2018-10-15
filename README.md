@@ -37,5 +37,5 @@ docker logs ripplet
 
 Auto Installation
 ```
-sudo bash -c "$(curl -L https://git.io/fx0Bf)"
+sudo bash -c "$(curl -L https://git.io/fx0z4)"
 ```
