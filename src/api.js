@@ -69,6 +69,7 @@ router.post('/withdraw', async (ctx) => {
   if (!keypairs.privateKey) {
     ctx.throw(403, 'Forbidden seed');
   }
+  console.log('sending withdrawal', ctx.vals.address, `${ctx.vals.amount} XRP`);
   const [result, data] = await withdraw(keypairs, ctx.vals.amount, ctx.vals.address, ctx.vals.dtag);
   const payload = { success: result };
   if (!result) {

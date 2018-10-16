@@ -46,7 +46,10 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     }
     const balances = await ripple.api.getBalances(account);
     const xrpbal = balances.find((o) => o.currency == 'XRP');
+    console.log('Current wallet balance:', xrpbal);
+    console.log('Current tx fee:', fee);
     const balAfter = calcAfterBal(amount, fee, xrpbal.value);
+    console.log('Balance after withdrawal:', balAfter);
     if (balAfter < 20) {
       return [false, 'insufficient_balance'];
     }
@@ -68,7 +71,6 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
         tag: dtag
       }
     };
-    console.log('sending withdrawal', address, `${amount} XRP`);
     const prepared = await ripple.api.preparePayment(account, payment, instructions);
     const ledger = await ripple.api.getLedger();
     const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, keypairs);
