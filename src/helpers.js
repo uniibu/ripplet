@@ -124,8 +124,8 @@ const calcAfterBal = (amount, fee, currbal) => {
   let amt = new Big(amount);
   currbal = new Big(currbal);
   amt = amt.plus(fee);
-  const left = currbal.minus(amt).toString();
-  return +left.toFixed(6);
+  const left = Number(currbal.minus(amt).toString());
+  return Number(left.toFixed(6));
 };
 const getMaxFee = () => {
   const config = getConf();
