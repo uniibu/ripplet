@@ -121,10 +121,11 @@ const dropsToXrp = drops => {
   return amt.times(0.000001).toString();
 };
 const calcAfterBal = (amount, fee, currbal) => {
-  let amt = new Big(amount);
-  currbal = new Big(currbal);
-  amt = amt.plus(fee);
-  const left = Number(currbal.minus(amt).toString());
+  amount = Number(amount);
+  fee = Number(fee);
+  currbal = Number(currbal);
+  const amt = amount + fee;
+  const left = currbal - amt;
   return Number(left.toFixed(6));
 };
 const getMaxFee = () => {
