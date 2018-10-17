@@ -20,8 +20,7 @@ function isPlainObject(input) {
   return input && !Array.isArray(input) && typeof input === 'object';
 }
 const truncateSix = num => {
-  const numPower = 10 ** 6;
-  return ~~(num * numPower) / numPower;
+  return Number(num.toFixed(6));
 };
 
 function bytesToHex(a) {
@@ -126,7 +125,7 @@ const calcAfterBal = (amount, fee, currbal) => {
   currbal = Number(currbal);
   const amt = amount + fee;
   const left = currbal - amt;
-  return Number(left.toFixed(6));
+  return truncateSix(left);
 };
 const getMaxFee = () => {
   const config = getConf();
