@@ -2,3 +2,4 @@ node_modules
 config.json
 xrp.env
 src/db/db.json
+logs
