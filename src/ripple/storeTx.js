@@ -1,4 +1,5 @@
 const db = require('../db');
+const logger = require('../logger');
 const { notify } = require('../helpers');
 exports._storeTransaction = (tx) => {
   const lastLedger = db.getLedger();
@@ -13,7 +14,7 @@ exports._storeTransaction = (tx) => {
       tag: destinationTag
     };
     db.updateLedger(tx.ledger_index);
-    console.log('sending notification', tx.ledger_index, tx.hash);
-    notify(transactionJson).catch(console.error);
+    logger.info('sending deposit notification', `txid: ${tx.hash}`, `amount: ${transferAmount}`, `tag: ${destinationTag}`);
+    notify(transactionJson).catch(logger.error);
   }
 };

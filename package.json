@@ -24,10 +24,12 @@
     "koa-bouncer": "^6.0.4",
     "koa-router": "^7.4.0",
     "lowdb": "^1.0.0",
-    "needle": "^2.2.4",
+    "phin": "^2.9.2",
     "promise-retry": "^1.1.1",
     "queuing": "^1.2.0",
     "ripple-keypairs": "^0.10.1",
-    "ripple-lib": "^1.0.1"
+    "ripple-lib": "^1.0.2",
+    "winston": "^3.1.0",
+    "winston-daily-rotate-file": "^3.3.3"
   }
 }

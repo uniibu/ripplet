@@ -1,5 +1,6 @@
 const { _storeTransaction } = require('./storeTx');
 const { getAddress } = require('../helpers');
+const logger = require('../logger');
 const wallets = [getAddress()];
 let closedLedger = 0;
 const _lastClosedLedger = exports._lastClosedLedger = (ledgerIndex) => {
@@ -31,7 +32,7 @@ exports._bootstrap = (api) => {
     }
   });
   wallets.forEach((_w, k) => {
-    console.log(`Processing history: @${k}`, _w);
+    logger.info(`checking history: @${k}`, _w);
     api.connection._ws.send(JSON.stringify({
       id: k + 1,
       command: 'account_tx',

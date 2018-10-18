@@ -1,17 +1,23 @@
 const RippleAPI = require('ripple-lib').RippleAPI;
 const promiseRetry = require('promise-retry');
+const logger = require('../logger');
 const { _lastClosedLedger, _bootstrap } = require('./bootstrap');
-const listServers = ['wss://s2.ripple.com:443', 'wss://s-west.ripple.com:443', 'wss://s-east.ripple.com:443', 'wss://s1.ripple.com:443'];
+const listServers = [
+  'wss://s2.ripple.com:443',
+  'wss://s-west.ripple.com:443',
+  'wss://s-east.ripple.com:443',
+  'wss://s1.ripple.com:443'
+];
 let api = exports.api = new RippleAPI({ server: listServers[0] });
 exports.connect = () => {
   api.on('error', (errorCode, errorMessage) => {
-    console.log(`${errorCode}: ${errorMessage}`);
+    logger.error(`[${errorCode}] ripple socket error: ${errorMessage}`);
   });
   api.on('connected', () => {
-    console.log('<< connected >>');
+    logger.info(`successfully connected to ${api.connection._url}`);
   });
   api.on('disconnected', (code) => {
-    console.log('<< disconnected >> code:', code);
+    logger.warn(`disconnected with code: ${code}`);
   });
   const connect = () => promiseRetry((retry, attempt) => api.connect().catch(() => {
     api.connection._url = listServers[attempt];
@@ -21,7 +27,7 @@ exports.connect = () => {
     api.getServerInfo().then(server => {
       _lastClosedLedger(server.validatedLedger.ledgerVersion);
       _bootstrap(api);
-      console.log('Syncing...');
+      logger.info('ripplet is syncing successfully');
     });
   }).catch(console.error);
 };

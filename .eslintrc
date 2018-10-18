@@ -41,11 +41,13 @@
     "brace-style": "error",
     "array-element-newline": [
       "error",
-      "never"
+      "consistent"
     ],
     "array-bracket-newline": [
       "error",
-      "never"
+      {
+        "minItems": 3
+      }
     ],
     "array-bracket-spacing": [
       "error",

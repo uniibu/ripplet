@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
+const logger = require('./logger');
 const { validateKey, truncateSix, getKeyPairs } = require('./helpers.js');
 const { withdraw, balance, validate, listTx } = require('./ripplet');
 const busy = require('./busy');
@@ -8,7 +9,9 @@ const app = new Koa();
 const router = new Router();
 app.use(
   require('koa-bodyparser')({
-    extendTypes: { json: ['text/plain'] },
+    extendTypes: {
+      json: ['text/plain']
+    },
     enableTypes: ['json']
   })
 );
@@ -17,7 +20,7 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    console.error(err.message);
+    logger.error(err.stack || err.message);
     busy.set(false);
     if (err instanceof bouncer.ValidationError) {
       ctx.status = 400;
@@ -32,20 +35,24 @@ app.use(async (ctx, next) => {
 router.use(async (ctx, next) => {
   ctx.validateQuery('key').required('Missing key').isString().trim();
   if (!validateKey(ctx.vals.key)) {
+    logger.error('invalid key');
     return ctx.throw(403, 'Forbidden');
   }
   await next();
 });
 router.get('/balance', async ctx => {
+  logger.info('RPC /balance was called', ctx.request.query);
   const bal = await balance();
   ctx.body = { success: true, balance: bal };
 });
 router.get('/validate', async ctx => {
+  logger.info('RPC /validate was called:', ctx.request.query);
   ctx.validateQuery('address').required('Missing address').isString().trim();
   const validAddress = await validate(ctx.vals.address);
   ctx.body = { success: validAddress };
 });
 router.get('/gettransactions', async ctx => {
+  logger.info('RPC /gettransactions was called:', ctx.request.query);
   ctx.validateQuery('limit').optional();
   ctx.validateQuery('filter').optional().isIn(['deposit', 'withdraw'], 'Invalid filter');
   const limit = +ctx.vals.limit || 100;
@@ -53,7 +60,9 @@ router.get('/gettransactions', async ctx => {
   ctx.body = { success: true, transactions: txs };
 });
 router.post('/withdraw', async (ctx) => {
+  logger.info('RPC /withdraw was called:', ctx.request.body);
   if (busy.get()) {
+    logger.warn('RPC /withdraw is busy');
     ctx.body = { success: false, error: 'busy' };
     return;
   }
@@ -61,15 +70,16 @@ router.post('/withdraw', async (ctx) => {
   ctx.validateBody('amount').required('Missing amount').toDecimal('Invalid amount').tap(n => truncateSix(n));
   ctx.validateBody('address').required('Missing address').isString().trim();
   ctx.validateBody('dtag').optional().toInt('Invalid dtag');
-  ctx.check(ctx.vals.amount, 'Invalid amount');
+  ctx.check(ctx.vals.amount && ctx.vals.amount >= 0.000001, 'Invalid amount');
   ctx.check(ctx.vals.address, 'Invalid address');
+  logger.info(`sending withdrawal ${ctx.vals.address} ${ctx.vals.amount} XRP`);
   const validAddress = await validate(ctx.vals.address);
   ctx.check(validAddress, 'Inactive address');
   const keypairs = getKeyPairs();
   if (!keypairs.privateKey) {
+    logger.error('could not retrieve private key from keypairs');
     ctx.throw(403, 'Forbidden seed');
   }
-  console.log('sending withdrawal', ctx.vals.address, `${ctx.vals.amount} XRP`);
   const [result, data] = await withdraw(keypairs, ctx.vals.amount, ctx.vals.address, ctx.vals.dtag);
   const payload = { success: result };
   if (!result) {

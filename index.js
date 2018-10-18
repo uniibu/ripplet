@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const logger = require('./src/logger');
 if (!fs.existsSync('./config.json')) {
   fs.outputJsonSync('./config.json', {});
 }
@@ -20,25 +21,25 @@ const genEncrypt = async (parsed) => {
 };
 const initCheck = async () => {
   if (!await fs.pathExists('./xrp.env')) {
-    console.error('Error: Missing Environment file! Exiting...');
+    logger.error('Error: Missing Environment file! Exiting...');
     process.exit();
   }
   const secret = await fs.readFile('./xrp.env');
   const parsed = parseEnv(secret);
   if (!parsed.secret) {
-    console.error('Error: Invalid Environment file, missing secret! Exiting...');
+    logger.error('Error: Invalid Environment file, missing secret! Exiting...');
     process.exit();
   }
   if (!parsed.notify) {
-    console.error('Error: Invalid Environment file, missing notify! Exiting...');
+    logger.error('Error: Invalid Environment file, missing notify! Exiting...');
     process.exit();
   }
   if (!parsed.key) {
-    console.error('Error: Invalid Environment file, missing key! Exiting...');
+    logger.error('Error: Invalid Environment file, missing key! Exiting...');
     process.exit();
   }
   if (parsed.maxfee && +parsed.maxfee < 0.000012) {
-    console.error('Error: Invalid Environment file, maxfee must be atleast 0.000012! Exiting...');
+    logger.error('Error: Invalid Environment file, maxfee must be atleast 0.000012! Exiting...');
     process.exit();
   }
   const wurl = await genEncrypt(parsed);

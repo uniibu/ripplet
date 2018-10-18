@@ -1,34 +1,49 @@
 const crypto = require('crypto');
-const needle = require('needle');
-const Big = require('big.js');
+const p = require('phin').promisified;
 const elliptic = require('elliptic');
 const Secp256k1 = elliptic.ec('secp256k1');
 const queue = require('queuing');
+const logger = require('./logger');
 const q = queue({ autostart: true, retry: true, concurrency: 1, delay: 5000 });
 const keypairs = require('ripple-keypairs');
 const pkgjson = require('../package.json');
-needle.defaults({
-  user_agent: `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)}/${pkgjson.version} (Node.js ${process.version})`
-});
-
-function getConf() {
+const got = async (method, uri, opts = {}) => {
+  opts = Object.assign(opts, {
+    url: uri,
+    method,
+    headers: {
+      'User-Agent': `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)}/${pkgjson.version} (Node.js ${process.version})`
+    }
+  });
+  try {
+    const r = await p(opts);
+    if (r.statusCode !== 200) {
+      if (opts.url !== 'https://btslr.co/ip') {
+        logger.error(`error sending notification statusCode: ${r.statusCode}. retrying...`);
+      }
+      return false;
+    }
+    return r.body || true;
+  } catch (e) {
+    if (opts.url !== 'https://btslr.co/ip') {
+      logger.error(`error sending notification ${e.message || e.stack}. retrying...`);
+    }
+    return false;
+  }
+};
+const getConf = () => {
   delete require.cache[require.resolve('../config.json')];
   return require('../config.json');
-}
-
-function isPlainObject(input) {
-  return input && !Array.isArray(input) && typeof input === 'object';
-}
-const truncateSix = num => {
-  return Number(num.toFixed(6));
 };
-
-function bytesToHex(a) {
-  return a.map(byteValue => {
-    const hex = byteValue.toString(16).toUpperCase();
-    return hex.length > 1 ? hex : `0${hex}`;
-  }).join('');
-}
+const isPlainObject = input => input && !Array.isArray(input) && typeof input === 'object';
+const truncateSix = (num = 0) => {
+  const str = parseFloat(num).toFixed(12);
+  return Number(str.substr(0, str.indexOf('.') + 7));
+};
+const bytesToHex = a => a.map(byteValue => {
+  const hex = byteValue.toString(16).toUpperCase();
+  return hex.length > 1 ? hex : `0${hex}`;
+}).join('');
 const getPackage = () => `${pkgjson.name.charAt(0).toUpperCase() + pkgjson.name.substr(1)} version ${pkgjson.version}`;
 const parseEnv = envstr => {
   const result = {};
@@ -38,20 +53,22 @@ const parseEnv = envstr => {
     if (match) {
       const key = match[1].trim();
       const value = match[2].trim();
-      result[key] = ['secret', 'key', 'notify'].includes(key) ? value : value.split(',');
+      result[key] = [
+        'secret', 'key', 'notify'
+      ].includes(key) ? value : value.split(',');
     }
   }
   return result;
 };
 const genCode = () => crypto.randomBytes(8).toString('hex');
 const crypt = {
-  'encrypt': function (secret, key) {
+  encrypt(secret, key) {
     const cipher = crypto.createCipher('aes-256-cbc', key);
     let crypted = cipher.update(secret, 'utf-8', 'hex');
     crypted += cipher.final('hex');
     return crypted;
   },
-  'decrypt': function (encrypted, key) {
+  decrypt(encrypted, key) {
     try {
       const decipher = crypto.createDecipher('aes-256-cbc', key);
       let decrypted = decipher.update(encrypted, 'hex', 'utf-8');
@@ -63,15 +80,18 @@ const crypt = {
   }
 };
 const getPubIp = async () => {
-  const ip = await needle('get', 'https://btslr.co/ip');
-  return ip.body;
+  const ip = await got('get', 'https://btslr.co/ip');
+  if (!ip) {
+    return 'localhost';
+  }
+  return ip;
 };
 const isHex = str => !isNaN(parseInt(str, 16));
 const jsonToEnv = obj => {
-  if (!isPlainObject(obj)) {
-    return '';
-  }
   let envstr = '';
+  if (!isPlainObject(obj)) {
+    return envstr;
+  }
   for (let [k, v] of Object.entries(obj)) {
     if (Array.isArray(v)) {
       v = v.join(',');
@@ -80,24 +100,14 @@ const jsonToEnv = obj => {
   }
   return envstr;
 };
-const sendnotify = async (txobj) => {
-  const config = getConf();
-  const r = await needle('post', config.notify, txobj, { json: true });
-  return r;
-};
 const notify = async txobj => {
-  q.push(async cb => {
-    try {
-      const r = await sendnotify(txobj);
-      if (r.statusCode !== 200) {
-        console.error('retrying failed notification tx', txobj);
-        return cb(r);
-      }
-      cb();
-    } catch (e) {
-      console.error('retrying failed notification tx', txobj);
-      cb(e);
+  q.push(async retry => {
+    const config = getConf();
+    const r = await got('post', config.notify, { data: txobj });
+    if (r) {
+      logger.info('sending deposit notification success for txid', txobj.hash);
     }
+    retry(!r);
   });
 };
 const validateKey = key => {
@@ -115,16 +125,11 @@ const getAddress = () => {
   const address = keypairs.deriveAddress(publicKey);
   return address;
 };
-const dropsToXrp = drops => {
-  const amt = new Big(drops);
-  return amt.times(0.000001).toString();
-};
 const calcAfterBal = (amount, fee, currbal) => {
   amount = Number(amount);
   fee = Number(fee);
   currbal = Number(currbal);
-  const amt = amount + fee;
-  const left = currbal - amt;
+  const left = currbal - (amount + fee);
   return truncateSix(left);
 };
 const getMaxFee = () => {
@@ -140,12 +145,10 @@ module.exports = {
   getPubIp,
   isHex,
   jsonToEnv,
-  conf: getConf,
   notify,
   validateKey,
   getKeyPairs,
   getAddress,
-  dropsToXrp,
   calcAfterBal,
   getMaxFee
 };

@@ -1,14 +1,17 @@
 const ripple = require('./ripple');
 const boxen = require('boxen');
+const logger = require('./logger');
 const { getLedger } = require('./db');
 const { getAddress, calcAfterBal, getPackage, getMaxFee } = require('./helpers');
 const account = getAddress();
-module.exports = async (wurl, key) => {
-  console.log(boxen(`${getPackage()}
+module.exports = (wurl, key) => {
+  const pkg = getPackage();
+  const infolog = boxen(`${pkg}
   Withdraw Callback Url: ${wurl}
   Wallet Address: ${account}
   Key: ${key}
-  Last Synced Ledger: ${getLedger()}`.replace(/ {2,}/g, ''), { padding: 1, margin: 1, borderStyle: 'double' }));
+  Last Synced Ledger: ${getLedger()}`.replace(/ {2,}/g, ''), { padding: 1, margin: 1, borderStyle: 'double' });
+  infolog.split('\n').forEach(logger.boxen);
   ripple.connect();
 };
 module.exports.balance = async () => {
@@ -29,7 +32,7 @@ module.exports.validate = async address => {
   try {
     const isValid = ripple.api.isValidAddress(address);
     if (!isValid) return false;
-    await ripple.api.getBalances(account);
+    await ripple.api.getBalances(address);
     return true;
   } catch (e) {
     return false;
@@ -39,18 +42,19 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};
     instructions.maxLedgerVersionOffset = 5;
-    let fee = +(await ripple.api.getFee());
+    let [fee, balances] = await Promise.all([ripple.api.getFee(), ripple.api.getBalances(account)]);
+    fee = Number(fee);
     const maxFee = getMaxFee();
     if (maxFee) {
       fee = fee >= maxFee ? maxFee : fee;
     }
-    const balances = await ripple.api.getBalances(account);
     const xrpbal = balances.find((o) => o.currency == 'XRP');
-    console.log('Current wallet balance:', xrpbal);
-    console.log('Current tx fee:', fee);
+    logger.info('Current wallet balance:', xrpbal);
+    logger.info('Current tx fee:', fee);
     const balAfter = calcAfterBal(amount, fee, xrpbal.value);
-    console.log('Balance after withdrawal:', balAfter);
+    logger.info('Balance after withdrawal:', balAfter);
     if (balAfter < 20) {
+      logger.error(`insufficient balance ${balAfter}`);
       return [false, 'insufficient_balance'];
     }
     instructions.fee = fee.toString();
@@ -71,8 +75,7 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
         tag: dtag
       }
     };
-    const prepared = await ripple.api.preparePayment(account, payment, instructions);
-    const ledger = await ripple.api.getLedger();
+    const [prepared, ledger] = await Promise.all([ripple.api.preparePayment(account, payment, instructions), ripple.api.getLedger()]);
     const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, keypairs);
     await ripple.api.submit(signedTransaction);
     const options = {
@@ -81,14 +84,14 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     };
     let txr = await ripple.verifyTransaction(id, options);
     if (txr.outcome.result == 'tesSUCCESS') {
-      console.log('withdrawal success', txr.id);
+      logger.info(`withdrawal success ${txr.id}`);
       return [true, { id: txr.id, fee }];
     } else {
-      console.log('withdrawal failed to validate within 5 blocks', txr.id);
+      logger.error(`withdrawal failed to validate within 5 blocks ${txr.id}`);
       return [false, 'withdrawal failed to validate within 5 blocks'];
     }
   } catch (e) {
-    console.error(e.stack || e.message);
+    logger.error(e.stack || e.message);
     return [false, 'internal_error'];
   }
 };
