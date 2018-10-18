@@ -7,10 +7,10 @@ const logFormat = printf(info => {
 const rtransport = new transports.DailyRotateFile({
   filename: 'ripplet-%DATE%.log',
   dirname: './logs',
-  datePattern: 'YYYY-MM-DD-HH',
+  datePattern: 'YYYY-ww',
   zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '7d',
+  maxSize: null,
+  maxFiles: null,
   handleExceptions: true
 });
 const ctransport = new transports.Console();
