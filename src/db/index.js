@@ -11,7 +11,7 @@ let connected = false;
 
 const connect = () => {
   if (connected) return true;
-  db.defaults({ ledger: 0 }).write();
+  db.defaults({ ledger: 0, last_worker: 0 }).write();
   connected = true;
   return;
 };

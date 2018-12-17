@@ -19,8 +19,6 @@ exports._storeTransaction = (tx) => {
       tag: destinationTag
     };
     db.updateLedger(tx.ledger_index);
-    logger.info('sending deposit notification', `txid: ${tx.hash}`, `amount: ${transferAmount}`, `tag: ${destinationTag}`);
     notify(transactionJson).catch(logger.error);
-
   }
 };
