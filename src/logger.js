@@ -24,19 +24,20 @@ const logger = createLogger({
   exitOnError: false
 });
 const wrap = {};
+const workerId = process.env.NODE_APP_INSTANCE == undefined ? 0 : process.env.NODE_APP_INSTANCE;
 wrap.info = (...args) => {
   args = args.map(a => typeof a !== 'string' ? JSON.stringify(a) : a);
-  logger.info(args.join(' '));
+  logger.info(`[WORKER ${workerId}]` + args.join(' '));
 };
 wrap.boxen = (args) => {
   logger.info(args);
 };
 wrap.error = (...args) => {
   args = args.map(a => typeof a !== 'string' ? JSON.stringify(a) : a);
-  logger.error(args.join(' '));
+  logger.error(`[WORKER ${workerId}]` + args.join(' '));
 };
 wrap.warn = (...args) => {
   args = args.map(a => typeof a !== 'string' ? JSON.stringify(a) : a);
-  logger.warn(args.join(' '));
+  logger.warn(`[WORKER ${workerId}]` + args.join(' '));
 };
 module.exports = wrap;

@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const db = require('./db');
 const p = require('phin').promisified;
 const elliptic = require('elliptic');
 const Secp256k1 = elliptic.ec('secp256k1');
@@ -18,14 +19,14 @@ const got = async (method, uri, opts = {}) => {
   try {
     const r = await p(opts);
     if (r.statusCode !== 200) {
-      if (opts.url !== 'https://btslr.co/ip') {
+      if (opts.url !== 'https://canihazip.com/s') {
         logger.error(`error sending notification statusCode: ${r.statusCode}. retrying...`);
       }
       return false;
     }
     return r.body || true;
   } catch (e) {
-    if (opts.url !== 'https://btslr.co/ip') {
+    if (opts.url !== 'https://canihazip.com/s') {
       logger.error(`error sending notification ${e.message || e.stack}. retrying...`);
     }
     return false;
@@ -80,7 +81,7 @@ const crypt = {
   }
 };
 const getPubIp = async () => {
-  const ip = await got('get', 'https://btslr.co/ip');
+  const ip = await got('get', 'https://canihazip.com/s');
   if (!ip) {
     return 'localhost';
   }
@@ -105,6 +106,7 @@ const notify = async txobj => {
     const config = getConf();
     const r = await got('post', config.notify, { data: txobj });
     if (r) {
+      db.unlock(txobj.hash);
       logger.info('sending deposit notification success for txid', txobj.hash);
     }
     retry(!r);

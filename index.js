@@ -43,6 +43,7 @@ const initCheck = async () => {
     process.exit();
   }
   const wurl = await genEncrypt(parsed);
+  require('./src/db').cleanLock();
   require('./src/api').listen(8899);
   require('./src/ripplet')(wurl, parsed.key);
 };

@@ -7,6 +7,7 @@ const account = getAddress();
 module.exports = (wurl, key) => {
   const pkg = getPackage();
   const infolog = boxen(`${pkg}
+  Worker Id: ${process.env.NODE_APP_INSTANCE == undefined ? 0 : process.env.NODE_APP_INSTANCE}
   Withdraw Callback Url: ${wurl}
   Wallet Address: ${account}
   Key: ${key}
