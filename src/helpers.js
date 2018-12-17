@@ -102,9 +102,9 @@ const jsonToEnv = obj => {
   return envstr;
 };
 const notify = async txobj => {
+  logger.info('sending deposit notification', `txid: ${txobj.hash}`, `amount: ${txobj.amount}`, `tag: ${txobj.tag}`);
   q.push(async retry => {
     const config = getConf();
-    logger.info('sending deposit notification', `txid: ${txobj.hash}`, `amount: ${txobj.amount}`, `tag: ${txobj.tag}`);
     const r = await got('post', config.notify, { data: txobj });
     if (r) {
       db.unlock(txobj.hash);
