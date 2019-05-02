@@ -25,7 +25,7 @@ exports._bootstrap = (api) => {
     if (message.type === 'response' && typeof message.id !== 'undefined' && message.id <= wallets.length) {
       if (typeof message.result.transactions !== 'undefined' && message.result.transactions.length > 0) {
         message.result.transactions = sortArrayBy(message.result.transactions, 'ledger_index');
-        message.result.transactions.filter(f => f.validated && wallets.includes(f.tx.Destination) && f.tx.TransactionType === 'Payment' && typeof f.tx.Amount === 'string' && f.meta.TransactionResult === 'tesSUCCESS').forEach(t => {
+        message.result.transactions.filter(f => f.validated && wallets.includes(f.tx.Destination) && f.tx.TransactionType === 'Payment' && typeof f.tx.delivered_amount === 'string' && f.meta.TransactionResult === 'tesSUCCESS').forEach(t => {
           _storeTransaction(t.tx);
         });
       }
