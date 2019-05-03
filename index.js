@@ -1,11 +1,16 @@
 const fs = require('fs-extra');
 const logger = require('./src/logger');
-
+const keypairs = require('ripple-keypairs');
 if (!fs.existsSync('./config.json')) {
   fs.outputJsonSync('./config.json', {});
 }
 const { parseEnv, genCode, crypt, getPubIp, isHex, jsonToEnv } = require('./src/helpers');
 const genEncrypt = async (parse) => {
+    if(!isHex(parse.secret)) {
+        parse.secret = keypairs.deriveKeypair( parse.secret ).privateKey
+        parse.secret = parse.secret.substring(2,parse.secret.length)
+        
+    }
   if (isHex(parse.secret) && parse.secret.length == 64) {
     parse.key = parse.key || genCode();
     parse.secret = crypt.encrypt(`00${parse.secret.toUpperCase()}`, parse.key);

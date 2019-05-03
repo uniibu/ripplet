@@ -16,17 +16,28 @@ const sortArrayBy = (arr, n) => arr.sort((a, b) => {
     return 1;
   return 0;
 });
+
+const checkTransaction = (tx) => {
+    if(!wallets.includes(tx.transaction.Destination)) return [false, 'invalid destination ' + tx.transaction.Destination];
+    if(!tx.validated) return [false, 'invalid'];
+    if(tx.transaction.TransactionType !== 'Payment') return [false, 'invalid transaction type ' + tx.transaction.TransactionType];
+    if(typeof tx.meta.delivered_amount !== 'string') return [false, 'invalid delivered_amount ' + tx.meta.delivered_amount];
+    if(tx.meta.TransactionResult !== 'tesSUCCESS') return [false, 'invalid transaction result ' + tx.meta.TransactionResult];
+    return [true];
+}
+
 exports._bootstrap = (api) => {
   api.connection._ws.on('message', m => {
     const message = JSON.parse(m);
+ 
     if (message.type === 'ledgerClosed') {
       _lastClosedLedger(message.ledger_index);
     }
     if (message.type === 'response' && typeof message.id !== 'undefined' && message.id <= wallets.length) {
       if (typeof message.result.transactions !== 'undefined' && message.result.transactions.length > 0) {
         message.result.transactions = sortArrayBy(message.result.transactions, 'ledger_index');
-        message.result.transactions.filter(f => f.validated && wallets.includes(f.tx.Destination) && f.tx.TransactionType === 'Payment' && typeof f.tx.delivered_amount === 'string' && f.meta.TransactionResult === 'tesSUCCESS').forEach(t => {
-          _storeTransaction(t.tx);
+        message.result.transactions.filter(f => f.validated && wallets.includes(f.tx.Destination) && f.tx.TransactionType === 'Payment' && typeof f.meta.delivered_amount === 'string' && f.meta.TransactionResult === 'tesSUCCESS').forEach(t => {
+          _storeTransaction(t.tx,t.meta);
         });
       }
     }
@@ -46,10 +57,13 @@ exports._bootstrap = (api) => {
     }));
   });
   api.connection.on('transaction', (t) => {
-    if (t.transaction.TransactionType === 'Payment' && t.meta.TransactionResult === 'tesSUCCESS' && t.status === 'closed' && wallets.includes(t.transaction.Destination) && t.validated) {
+    const checktx = checkTransaction(t);
+    if (checktx[0]) {      
       const tx = t.transaction;
       tx.ledger_index = t.ledger_index;
-      _storeTransaction(tx);
+      _storeTransaction(tx,t.meta);
+    }else{
+        logger.info('checkTransaction Failed: '+ checktx[1])
     }
   });
   return api.connection.request({
