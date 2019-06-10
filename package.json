@@ -18,7 +18,7 @@
     "boxen": "^2.0.0",
     "commander": "^2.19.0",
     "elliptic": "^6.4.1",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^8.0.1",
     "koa": "^2.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-bouncer": "^6.0.4",
