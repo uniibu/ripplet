@@ -18,6 +18,9 @@ const sortArrayBy = (arr, n) => arr.sort((a, b) => {
 });
 
 const checkTransaction = (tx) => {
+    if(tx.transaction.TransactionType == 'AccountSet' && wallets.includes(tx.transaction.Account)){
+        return [true]
+    }
     if(!wallets.includes(tx.transaction.Destination)) return [false, 'invalid destination ' + tx.transaction.Destination];
     if(!tx.validated) return [false, 'invalid'];
     if(tx.transaction.TransactionType !== 'Payment') return [false, 'invalid transaction type ' + tx.transaction.TransactionType];
@@ -29,7 +32,7 @@ const checkTransaction = (tx) => {
 exports._bootstrap = (api) => {
   api.connection._ws.on('message', m => {
     const message = JSON.parse(m);
- 
+
     if (message.type === 'ledgerClosed') {
       _lastClosedLedger(message.ledger_index);
     }
@@ -58,7 +61,7 @@ exports._bootstrap = (api) => {
   });
   api.connection.on('transaction', (t) => {
     const checktx = checkTransaction(t);
-    if (checktx[0]) {      
+    if (checktx[0]) {
       const tx = t.transaction;
       tx.ledger_index = t.ledger_index;
       _storeTransaction(tx,t.meta);

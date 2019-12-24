@@ -39,6 +39,24 @@ module.exports.validate = async address => {
     return false;
   }
 };
+module.exports.setrequired = async (keypairs) => {
+  try {
+    const payment = {
+      "TransactionType": "AccountSet",
+      "Account": account,
+      "Fee": "15000",
+      "Flags": 0,
+      "SetFlag": 1,
+    }
+    const prepared = await ripple.api.prepareTransaction(payment, { maxLedgerVersionOffset: 5 });
+    const { signedTransaction, id } = ripple.api.sign(prepared.txJSON, keypairs);
+    await ripple.api.submit(signedTransaction);
+    return [true, id];
+  } catch (e) {
+    logger.error(e.stack || e.message);
+    return [false, 'internal_error'];
+  }
+};
 module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
   try {
     const instructions = {};

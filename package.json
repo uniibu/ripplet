@@ -31,5 +31,8 @@
     "ripple-lib": "^1.5.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.0"
+  },
+  "devDependencies": {
+    "nodevl": "^1.0.2"
   }
 }

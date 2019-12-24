@@ -3,7 +3,7 @@ const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
 const logger = require('./logger');
 const { validateKey, truncateSix, getKeyPairs } = require('./helpers.js');
-const { withdraw, balance, validate, listTx } = require('./ripplet');
+const { withdraw, balance, validate, listTx, setrequired } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
 const router = new Router();
@@ -44,6 +44,22 @@ router.get('/balance', async ctx => {
   logger.info('RPC /balance was called', ctx.request.query);
   const bal = await balance();
   ctx.body = { success: true, balance: bal };
+});
+router.get('/setrequiretag', async ctx => {
+  logger.info('RPC /setrequiretag was called');
+  const keypairs = getKeyPairs();
+  if (!keypairs.privateKey) {
+    logger.error('could not retrieve private key from keypairs');
+    ctx.throw(403, 'Forbidden seed');
+  }
+  const [result, data] = await setrequired(keypairs);
+  const payload = {success: result}
+  if(!result) {
+      payload.error = data;
+  }else {
+      payload.txid = data
+  }
+  ctx.body = payload;
 });
 router.get('/validate', async ctx => {
   logger.info('RPC /validate was called:', ctx.request.query);

@@ -2,7 +2,7 @@
 
 const program = require('commander');
 const path = require('path');
-const p = require('phin').promisified;
+const p = require('phin');
 const config = require(path.resolve(__dirname, '../config.json'));
 const pkgjson = require(path.resolve(__dirname, '../package.json'));
 const reqLocal = async (route, data) => {
@@ -31,6 +31,17 @@ program
     const r = await reqLocal('balance');
     if (r.body.success) {
       console.log(`${r.body.balance.value} ${r.body.balance.currency}`);
+    } else {
+      console.log('Internal Error');
+    }
+  });
+program
+  .command('setDtagRequired')
+  .description('Sets DTag to be required')
+  .action(async () => {
+    const r = await reqLocal('setrequiretag');
+    if (r.body.success) {
+      console.log(`Txid: ${r.body.txid}`);
     } else {
       console.log('Internal Error');
     }
