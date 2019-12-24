@@ -3,7 +3,7 @@ const Router = require('koa-router');
 const bouncer = require('koa-bouncer');
 const logger = require('./logger');
 const { validateKey, truncateSix, getKeyPairs } = require('./helpers.js');
-const { withdraw, balance, validate, listTx, setrequired } = require('./ripplet');
+const { withdraw, balance, validate, listTx, setrequired, toXaddress, fromXaddress } = require('./ripplet');
 const busy = require('./busy');
 const app = new Koa();
 const router = new Router();
@@ -66,6 +66,19 @@ router.get('/validate', async ctx => {
   ctx.validateQuery('address').required('Missing address').isString().trim();
   const validAddress = await validate(ctx.vals.address);
   ctx.body = { success: validAddress };
+});
+router.get('/toxaddress', async ctx => {
+  logger.info('RPC /toxaddress was called:', ctx.request.query);
+  ctx.validateQuery('address').required('Missing address').isString().trim();
+  ctx.validateQuery('tag').required('Missing tag').isString().trim();
+  const xAddress = toXaddress(ctx.vals.address, ctx.vals.tag);
+  ctx.body = { success: true, xaddress: xAddress };
+});
+router.get('/fromxaddress', async ctx => {
+  logger.info('RPC /fromxaddress was called:', ctx.request.query);
+  ctx.validateQuery('xaddress').required('Missing xaddress').isString().trim();
+  const obj = fromXaddress(ctx.vals.xaddressg);
+  ctx.body = { success: true, obj };
 });
 router.get('/gettransactions', async ctx => {
   logger.info('RPC /gettransactions was called:', ctx.request.query);

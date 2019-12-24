@@ -1,8 +1,10 @@
 const ripple = require('./ripple');
+const {Encode, Decode} = require('xrpl-tagged-address-codec')
 const boxen = require('boxen');
 const logger = require('./logger');
 const { getLedger } = require('./db');
 const { getAddress, calcAfterBal, getPackage, getMaxFee } = require('./helpers');
+
 const account = getAddress();
 module.exports = (wurl, key) => {
   const pkg = getPackage();
@@ -114,3 +116,24 @@ module.exports.withdraw = async (keypairs, amount, address, dtag = 0) => {
     return [false, 'internal_error'];
   }
 };
+
+module.exports.toXaddress = (addr, tag) => {
+    if(!addr || !tag) return false;
+    try{
+        const tagged = Encode({ account: addr, tag: tag })
+        return tagged;
+    }catch(e) {
+        console.error(e)
+        return false
+    }
+}
+module.exports.fromXaddress = (xaddr) => {
+    if(!xaddr) return false;
+    try{
+        const untagged = Decode(xaddr)
+        return untagged;
+    }catch(e) {
+        console.error(e)
+        return false
+    }
+}
