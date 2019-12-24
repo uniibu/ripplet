@@ -3,3 +3,6 @@ xrp.env
 config.json
 src/db/db.json
 logs
+delete.js
+partial.js
+settings.json
