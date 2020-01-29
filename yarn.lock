@@ -577,7 +577,7 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-elliptic@^6.4.0, elliptic@^6.5.2:
+elliptic@^6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.2.tgz#05c5678d7173c049d8ca433552224a495d0e3762"
   integrity sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==
@@ -1612,15 +1612,15 @@ ripple-binary-codec@^0.2.5:
     lodash "^4.17.15"
     ripple-address-codec "^3.0.4"
 
-ripple-keypairs@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/ripple-keypairs/-/ripple-keypairs-0.11.0.tgz#ee9f4172d615106f4d3c0af15805960742dab045"
-  integrity sha512-kzYwlWaLu1fl+StJdfZuEmcooJI18QuWxatII+Rcd3QeWXne16ml7N1e4HpYI/aJ69Cn4npsJef7kHSaA83Fgg==
+ripple-keypairs@^0.11.0, ripple-keypairs@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/ripple-keypairs/-/ripple-keypairs-0.11.1.tgz#e8637c9d577a579c311138c7848cdc5928908979"
+  integrity sha512-xdakxb+/4yo3TWA2ZImEma3g9OZrvoVRMDC9A2dfk6V+tBsDWug1p53bfmSnfTaue7kf2O5ejq2bfmYG8W08FA==
   dependencies:
     babel-runtime "^5.8.20"
     bn.js "^3.1.1"
     brorand "^1.0.5"
-    elliptic "^6.4.0"
+    elliptic "^6.5.2"
     hash.js "^1.0.3"
     ripple-address-codec "^2.0.1"
 
