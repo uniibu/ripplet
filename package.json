@@ -20,7 +20,7 @@
     "elliptic": "^6.5.2",
     "fs-extra": "^8.1.0",
     "koa": "^2.11.0",
-    "koa-bodyparser": "^4.2.1",
+    "koa-bodyparser": "^4.3.0",
     "koa-bouncer": "^6.0.4",
     "koa-router": "^7.4.0",
     "lowdb": "^1.0.0",
