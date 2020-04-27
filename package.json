@@ -16,7 +16,7 @@
   "dependencies": {
     "big.js": "^5.2.1",
     "boxen": "^4.2.0",
-    "commander": "^4.0.1",
+    "commander": "^5.1.0",
     "elliptic": "^6.5.2",
     "fs-extra": "^8.1.0",
     "koa": "^2.11.0",
