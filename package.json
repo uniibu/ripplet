@@ -22,7 +22,7 @@
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-bouncer": "^6.0.4",
-    "koa-router": "^7.4.0",
+    "koa-router": "^9.0.1",
     "lowdb": "^1.0.0",
     "phin": "^3.4.1",
     "promise-retry": "^1.1.1",
