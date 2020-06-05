@@ -9,7 +9,7 @@ const genEncrypt = async (parse) => {
     if(!isHex(parse.secret)) {
         parse.secret = keypairs.deriveKeypair( parse.secret ).privateKey
         parse.secret = parse.secret.substring(2,parse.secret.length)
-        
+
     }
   if (isHex(parse.secret) && parse.secret.length == 64) {
     parse.key = parse.key || genCode();
@@ -27,6 +27,7 @@ const genEncrypt = async (parse) => {
 };
 
 const initCheck = async () => {
+    logger.info("starting ripplet workers.. please wait")
   if (!await fs.pathExists('./xrp.env')) {
     logger.error('Error: Missing Environment file! Exiting...');
     process.exit();
