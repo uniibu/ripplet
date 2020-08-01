@@ -78,6 +78,27 @@ const crypt = {
     } catch (e) {
       return false;
     }
+  },
+  encryptIv(secret, key) {
+    key = crypto.scryptSync(key, 'bitsler', 32);
+    let iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    let crypted = cipher.update(secret, 'utf-8', 'hex');
+    crypted += cipher.final('hex');
+    return iv.toString('hex') + ":" + crypted;
+  },
+  decryptIv(encrypted, key, iv) {
+    try {
+      key = crypto.scryptSync(key, 'bitsler', 32);
+      iv = Buffer.from(iv, "hex")
+      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+      let decrypted = decipher.update(encrypted, 'hex', 'utf-8');
+      decrypted += decipher.final('utf-8');
+      return decrypted;
+    } catch (e) {
+      console.log(e)
+      return false;
+    }
   }
 };
 const getPubIp = async () => {
@@ -119,7 +140,7 @@ const validateKey = key => {
 };
 const getKeyPairs = () => {
   const config = getConf();
-  const secret = crypt.decrypt(config.secret, config.key);
+  const secret = crypt.decryptIv(config.secret, config.key, config.iv);
   const publicKey = bytesToHex(Secp256k1.keyFromPrivate(secret).getPublic().encodeCompressed());
   return { privateKey: secret, publicKey };
 };

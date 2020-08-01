@@ -18,10 +18,16 @@ module.exports = (wurl, key) => {
   ripple.connect();
 };
 module.exports.balance = async () => {
+  try {
   const balances = await ripple.api.getBalances(account);
   return balances.find((o) => o.currency == 'XRP');
+  }catch(err) {
+    logger.error(err)
+    process.exit(1)
+  }
 };
 module.exports.listTx = async (limit = 100, filter) => {
+  try {
   const opts = { earliestFirst: false, limit, binary: false };
   if (filter === 'deposit') {
     opts.initiated = false;
@@ -30,6 +36,10 @@ module.exports.listTx = async (limit = 100, filter) => {
   }
   const txs = await ripple.api.getTransactions(account, opts);
   return txs;
+  }catch(err) {
+    logger.error(err)
+    process.exit(1)
+  }
 };
 module.exports.validate = async address => {
   try {

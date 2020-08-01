@@ -3,3 +3,5 @@ config.json
 xrp.env
 src/db/db.json
 logs
+xrp.env.bak
+test.js
