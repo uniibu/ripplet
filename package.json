@@ -1,6 +1,6 @@
 {
   "name": "ripplet",
-  "version": "4.0.3",
+  "version": "4.0.5",
   "description": "simple ripple wallet",
   "main": "index.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodevl index.js",
-    "start": "pm2 start index.js --name ripple -i 4 && pm2 logs"
+    "start": "pm2 startOrRestart && pm2 logs"
   },
   "author": "unibtc@gmail.com",
   "license": "MIT",

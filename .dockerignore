@@ -5,3 +5,4 @@ src/db/db.json
 logs
 xrp.env.bak
 test.js
+!ecosystem.config.json

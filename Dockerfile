@@ -10,4 +10,4 @@ COPY . .
 RUN chmod +x /usr/src/app/bin/ripplet-cli && ln -s /usr/src/app/bin/ripplet-cli /usr/bin/
 EXPOSE 8899
 
-CMD [ "yarn", "start" ]
+CMD [ "pm2-runtime", "ecosystem.config.js" ]
