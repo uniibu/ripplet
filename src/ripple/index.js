@@ -4,8 +4,8 @@ const logger = require('../logger');
 let maxretry = 4;
 const { _lastClosedLedger, _bootstrap } = require('./bootstrap');
 const listServers = [
-  'wss://xrp.nodes.dev',
-  'wss://xrp.nodes.dev'
+  'wss://ripple1.nodes.dev',
+  'wss://ripple2.nodes.dev'
 ];
 const apiServer = listServers[process.env.NODE_APP_INSTANCE == undefined ? 0 : process.env.NODE_APP_INSTANCE];
 let api = exports.api = new RippleAPI({ server: apiServer });

@@ -98,7 +98,7 @@ router.post('/withdraw', async (ctx) => {
   busy.set(true);
   ctx.validateBody('amount').required('Missing amount').toDecimal('Invalid amount').tap(n => truncateSix(n));
   ctx.validateBody('address').required('Missing address').isString().trim();
-  ctx.validateBody('dtag').optional().toInt('Invalid dtag');
+  ctx.validateBody('dtag').required().toInt('Invalid dtag');
   ctx.check(ctx.vals.amount && ctx.vals.amount >= 0.000001, 'Invalid amount');
   ctx.check(ctx.vals.address, 'Invalid address');
   logger.info(`sending withdrawal ${ctx.vals.address} ${ctx.vals.amount} XRP`);

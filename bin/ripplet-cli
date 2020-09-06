@@ -13,8 +13,22 @@ const reqLocal = async (route, data) => {
     }
     const payload = {
       url: uri,
-      method: 'get',
+      method: 'GET',
       parse: 'json'
+    };
+    return await p(payload);
+  } catch (e) {
+    console.error(e);
+  }
+};
+const reqLocalPost = async (route, data) => {
+  try {
+    let uri = `http://localhost:8899/${route}?key=${config.key}`;
+    const payload = {
+      url: uri,
+      method: 'POST',
+      parse: 'json',
+      data: data
     };
     return await p(payload);
   } catch (e) {
@@ -84,6 +98,17 @@ program
 if (!process.argv.slice(2).length) {
   program.outputHelp();
 }
+program
+  .command('sendto <address> <dtag> <amount>')
+  .description('Sends the given amount to the given address')
+  .action(async (address,dtag,amount) => {
+    const r = await reqLocalPost('withdraw', {address,dtag,amount});
+    if (r.body.success) {
+      console.log("successfully sent", r.body);
+    } else {
+      console.log('Error sending');
+    }
+  });
 program
   .command('*')
   .action(() => {

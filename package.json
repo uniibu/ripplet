@@ -1,6 +1,6 @@
 {
   "name": "ripplet",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "simple ripple wallet",
   "main": "index.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodevl index.js",
-    "start": "pm2 startOrRestart && pm2 logs"
+    "start": "pm2 flush && pm2 startOrRestart ecosystem.config.js && pm2 logs ripple"
   },
   "author": "unibtc@gmail.com",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "koa-bouncer": "^6.0.4",
     "koa-router": "^9.0.1",
     "lowdb": "^1.0.0",
-    "phin": "^3.4.1",
+    "phin": "^3.5.0",
     "promise-retry": "^1.1.1",
     "queuing": "^1.3.0",
     "ripple-keypairs": "^1.0.1",

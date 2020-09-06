@@ -35,6 +35,7 @@ exports._bootstrap = (api) => {
 
     if (message.type === 'ledgerClosed') {
       _lastClosedLedger(message.ledger_index);
+      logger.info(`syncing ledger no. ${message.ledger_index}`);
     }
     if (message.type === 'response' && typeof message.id !== 'undefined' && message.id <= wallets.length) {
       if (typeof message.result.transactions !== 'undefined' && message.result.transactions.length > 0) {
