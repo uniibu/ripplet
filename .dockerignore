@@ -6,3 +6,5 @@ logs
 xrp.env.bak
 test.js
 !ecosystem.config.json
+.theia
+.ripplet
