@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@devnodes/logger-client": "^1.1.2",
-    "big.js": "^5.2.1",
+    "big.js": "^6.0.0",
     "boxen": "^4.2.0",
     "commander": "^5.1.0",
     "elliptic": "^6.5.2",
