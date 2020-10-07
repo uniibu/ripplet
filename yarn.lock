@@ -10,13 +10,6 @@
     reconnecting-websocket "^4.4.0"
     ws "^7.3.1"
 
-"@types/base-x@^3.0.0":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@types/base-x/-/base-x-3.0.6.tgz#23fcfaa1cfe14d47524985375044cbb84465d9ca"
-  integrity sha512-sWf3jyM1xa/k7kP+CWtF72cgY4PjPEIWg+zaaFMX8oND9Qy+MRFnol2pl4Rb6K+P6LDrVkUoXdI3C1ekXQonYA==
-  dependencies:
-    base-x "*"
-
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -139,25 +132,10 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-babel-runtime@^6.6.1:
-  version "6.26.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
-  integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.11.0"
-
-base-x@*, base-x@3.0.7:
+base-x@3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.7.tgz#1c5a7fafe8f66b4114063e8da102799d4e7c408f"
   integrity sha512-zAKJGuQPihXW22fkrfOclUUZXM2g92z5GzlSMHxhO6r6Qj+Nm0ccaGNBzDZojzwOMkpjAv4J0fOv1U4go+a4iw==
-  dependencies:
-    safe-buffer "^5.0.1"
-
-base-x@3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.4.tgz#94c1788736da065edb1d68808869e357c977fa77"
-  integrity sha512-UYOadoSIkEI/VrRGSG6qp93rp2WdokiAiNYDfGW5qURAY8GiAQkvMbwNNSDYiVJopqv4gCna7xqf4rrNGp+5AA==
   dependencies:
     safe-buffer "^5.0.1"
 
@@ -208,7 +186,7 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bn.js@^4.11.3, bn.js@^4.4.0:
+bn.js@^4.4.0:
   version "4.11.8"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
@@ -465,17 +443,12 @@ copy-to@^2.0.1:
   resolved "https://registry.yarnpkg.com/copy-to/-/copy-to-2.0.1.tgz#2680fbb8068a48d08656b6098092bdafc906f4a5"
   integrity sha1-JoD7uAaKSNCGVrYJgJK9r8kG9KU=
 
-core-js@^2.4.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.0.tgz#1e30793e9ee5782b307e37ffa22da0eacddd84d4"
-  integrity sha512-kLRC6ncVpuEW/1kwrOXYX6KQASCVtrh1gQr/UiaVgFlf9WE5Vp+lNe5+h3LuMr5PAucWnnEXwH0nQHRH/gpGtw==
-
 core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-create-hash@^1.1.2:
+create-hash@^1.1.2, create-hash@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/create-hash/-/create-hash-1.2.0.tgz#889078af11a63756bcfb59bd221996be3a9ef196"
   integrity sha512-z00bCGNHDG8mHAkP7CtT1qVu+bFQUPjYq/4Iv3C3kWjTFV10zIjfSoeqXo9Asws8gwSHDGj/hl2u4OGIjapeCg==
@@ -514,10 +487,10 @@ debug@~3.1.0:
   dependencies:
     ms "2.0.0"
 
-decimal.js@^5.0.8:
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-5.0.8.tgz#b48c3fb7d73a2d4d4940e0b38f1cd21db5b367ce"
-  integrity sha1-tIw/t9c6LU1JQOCzjxzSHbWzZ84=
+decimal.js@^10.2.0:
+  version "10.2.1"
+  resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.2.1.tgz#238ae7b0f0c793d3e3cea410108b35a2c01426a3"
+  integrity sha512-KaL7+6Fw6i5A2XSnsbhm/6B+NuEA7TZ4vqxnd5tXz9sbKtrN9Srj8ab4vKVdK8YAqZO9P1kg45Y6YLoduPf+kw==
 
 decode-uri-component@^0.2.0:
   version "0.2.0"
@@ -1188,12 +1161,7 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
   integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
 
-lodash@4, lodash@^4.0.0, lodash@^4.17.4:
-  version "4.17.11"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
-  integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
-
-lodash@^4.17.14, lodash@^4.17.15:
+lodash@4, lodash@^4.0.0, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -1524,11 +1492,6 @@ reconnecting-websocket@^4.4.0:
   resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.4.0.tgz#3b0e5b96ef119e78a03135865b8bb0af1b948783"
   integrity sha512-D2E33ceRPga0NvTDhJmphEgJ7FUYF0v4lr1ki0csq06OdlxKfugGzN0dSkxM/NfqCxYELK4KcaTOUOjTV6Dcng==
 
-regenerator-runtime@^0.11.0:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
-  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
-
 regex-not@^1.0.0, regex-not@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/regex-not/-/regex-not-1.0.2.tgz#1f4ece27e00b0b65e0247a6810e6a85d83a5752c"
@@ -1583,24 +1546,7 @@ ripple-address-codec@^2.0.1:
     hash.js "^1.0.3"
     x-address-codec "^0.7.0"
 
-ripple-address-codec@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/ripple-address-codec/-/ripple-address-codec-3.0.4.tgz#a7a8bb040df41cb082330fd828f09b9e6478c7fd"
-  integrity sha512-GFk1BgavW+9oy5Z1Cp6YAGMfB51QdbeuhOo0Zir+s+S40F5vHtVZYu6zZE1eOAX92A5kygPuBRX4APH2v8Yhmg==
-  dependencies:
-    base-x "3.0.4"
-    create-hash "^1.1.2"
-
-ripple-address-codec@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/ripple-address-codec/-/ripple-address-codec-4.0.0.tgz#c20f39eea38def43d2379462e47bff4adabece30"
-  integrity sha512-PsKl9aytg6fZG2F4RtfPT0c1gj42suAQY9VvJVGz+DfQTdXQaTT9V/StVhaJ6jhVpl7oCd981BB9p2Kq+Kyrng==
-  dependencies:
-    "@types/base-x" "^3.0.0"
-    base-x "3.0.4"
-    create-hash "^1.1.2"
-
-ripple-address-codec@^4.1.1:
+ripple-address-codec@^4.0.0, ripple-address-codec@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/ripple-address-codec/-/ripple-address-codec-4.1.1.tgz#48e5d76b00b6b9752b1d376646d5abbcd3c8bd67"
   integrity sha512-mcVD8f7+CH6XaBnLkRcmw4KyHMufa0HTJE3TYeaecwleIQASLYVenjQmVJLgmJQcDUS2Ldh/EltqktmiFMFgkg==
@@ -1608,18 +1554,14 @@ ripple-address-codec@^4.1.1:
     base-x "3.0.7"
     create-hash "^1.1.2"
 
-ripple-binary-codec@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/ripple-binary-codec/-/ripple-binary-codec-0.2.5.tgz#4d5b0cf8f68c9dd44c9350b2ff1616e60ee63fe8"
-  integrity sha512-wCXrdANutgSTzsYFUfifmNYu6j03+1aZhyVXoQr8tKYujqvbLBseJp8ltZwrXGEa43aqQqPn4DBxdQWjEGX0Bg==
+ripple-binary-codec@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ripple-binary-codec/-/ripple-binary-codec-1.0.2.tgz#a6a70d104f115300ceb0b01c70aafc2970952474"
+  integrity sha512-KfkUZ3GHuhapDCB7OLiCMugo/vaxaRJyXeUeOOPuLNqCfd8U6zvG5wgDVae/6u0zyalZiR3b80kMGxGN0ZrtMA==
   dependencies:
-    babel-runtime "^6.6.1"
-    bn.js "^4.11.3"
-    create-hash "^1.1.2"
-    decimal.js "^5.0.8"
-    inherits "^2.0.1"
-    lodash "^4.17.15"
-    ripple-address-codec "^3.0.4"
+    create-hash "^1.2.0"
+    decimal.js "^10.2.0"
+    ripple-address-codec "^4.1.1"
 
 ripple-keypairs@^1.0.0, ripple-keypairs@^1.0.1:
   version "1.0.1"
@@ -1640,10 +1582,10 @@ ripple-lib-transactionparser@0.8.2:
     bignumber.js "^9.0.0"
     lodash "^4.17.15"
 
-ripple-lib@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/ripple-lib/-/ripple-lib-1.7.1.tgz#f9b3de525791749d3fb770e301989834afbaf15a"
-  integrity sha512-sulON8v8rfcofC0h18hzOkOfnegz0wz87FaqfN9D4Y3exSgSM5Nm1YLdcp5pdY89Y2fvD1OOWXJ6S/q1nU7LOw==
+ripple-lib@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/ripple-lib/-/ripple-lib-1.8.1.tgz#e05447ac13038a38352c0ac3fe18b12770558861"
+  integrity sha512-5K0wCpQG441g9BZ+ZnD1VgvTTAqJglpfEb9BZiNzwm4xICiJrgZRNUG9PzVbEoRjtPb3HVELaUezpK/tO4rUGw==
   dependencies:
     "@types/lodash" "^4.14.136"
     "@types/ws" "^7.2.0"
@@ -1653,7 +1595,7 @@ ripple-lib@^1.7.1:
     lodash "^4.17.4"
     lodash.isequal "^4.5.0"
     ripple-address-codec "^4.1.1"
-    ripple-binary-codec "^0.2.5"
+    ripple-binary-codec "^1.0.2"
     ripple-keypairs "^1.0.0"
     ripple-lib-transactionparser "0.8.2"
     ws "^7.2.0"
@@ -2020,12 +1962,7 @@ winston@^3.2.1:
     triple-beam "^1.3.0"
     winston-transport "^4.3.0"
 
-ws@^7.2.0:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.2.1.tgz#03ed52423cd744084b2cf42ed197c8b65a936b8e"
-  integrity sha512-sucePNSafamSKoOqoNfBd8V0StlkzJKL2ZAhGQinCfNQ+oacw+Pk7lcdAElecBF2VkLNZRiIb5Oi1Q5lVUVt2A==
-
-ws@^7.3.1:
+ws@^7.2.0, ws@^7.3.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.1.tgz#d0547bf67f7ce4f12a72dfe31262c68d7dc551c8"
   integrity sha512-D3RuNkynyHmEJIpD2qrgVkc9DQ23OrN/moAwZX4L8DfvszsJxpjQuUq3LMx6HoYji9fbIOBY18XWBsAux1ZZUA==
