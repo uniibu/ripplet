@@ -38,6 +38,6 @@
     "xrpl-tagged-address-codec": "^0.2.1"
   },
   "devDependencies": {
-    "nodevl": "^1.0.2"
+    "nodevl": "1.0.2"
   }
 }

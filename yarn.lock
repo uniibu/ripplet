@@ -1347,7 +1347,7 @@ negotiator@0.6.1:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
   integrity sha1-KzJxhOiZIQEXeyhWP7XnECrNDKk=
 
-nodevl@^1.0.2:
+nodevl@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nodevl/-/nodevl-1.0.2.tgz#1c20f42a2347d9afdad234727c258301d4390283"
   integrity sha512-I+VqbNueKvLhMzczz974YzU20jEiuTrww56JS/ByTzSQdwULoTABbw7VXD7aVU3a+3hw5uzN2Vb6RosSvGgszQ==
