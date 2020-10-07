@@ -1,6 +1,6 @@
 {
   "name": "ripplet",
-  "version": "4.0.7",
+  "version": "4.1.0",
   "description": "simple ripple wallet",
   "main": "index.js",
   "bin": {
@@ -10,9 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodevl index.js",
     "start": "pm2 flush && pm2 startOrRestart ecosystem.config.js && pm2 logs ripple",
-    "release:git": "github-release release --user uniibu --repo ripplet --tag v4.0.7 --name \"v4.0.7\" --description \"ripplet wallet release\"",
+    "release:git": "github-release release --user uniibu --repo ripplet --tag v4.1.0 --name \"v4.1.0\" --description \"ripplet wallet release\"",
     "release:now": "yarn release:git",
-    "build:release": "docker build --no-cache -t unibtc/ripplet:latest -t unibtc/ripplet:4.0.7 . && git add . && git commit -m \"update\" && git push && yarn release:now && docker push unibtc/ripplet:latest && docker push unibtc/ripplet:4.0.7"
+    "build:release": "docker build --no-cache -t unibtc/ripplet:latest -t unibtc/ripplet:4.1.0 . && git add . && git commit -m \"update\" && git push && yarn release:now && docker push unibtc/ripplet:latest && docker push unibtc/ripplet:4.1.0"
   },
   "author": "unibtc@gmail.com",
   "license": "MIT",

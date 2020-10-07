@@ -29,7 +29,7 @@ docker run -v ripplet-data:/usr/src/app --name=ripplet-node -d \
       -v $HOME/.ripplet/xrp.env:/usr/src/app/xrp.env \
       -v $HOME/.ripplet/db.json:/usr/src/app/src/db/db.json \
       -v $HOME/.ripplet/logs:/usr/src/app/logs \
-      unibtc/ripplet:latest
+      unibtc/ripplet:4.1.0
 ```
 
 Check Logs to view your withdrawal url
