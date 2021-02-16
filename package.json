@@ -20,7 +20,7 @@
     "@devnodes/logger-client": "^1.1.2",
     "big.js": "^5.2.1",
     "boxen": "^4.2.0",
-    "commander": "^5.1.0",
+    "commander": "^7.1.0",
     "elliptic": "^6.5.2",
     "fs-extra": "^9.0.1",
     "koa": "^2.12.0",
