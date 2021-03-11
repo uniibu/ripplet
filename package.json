@@ -34,7 +34,7 @@
     "ripple-keypairs": "^1.0.1",
     "ripple-lib": "^1.7.1",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2",
+    "winston-daily-rotate-file": "^4.5.1",
     "xrpl-tagged-address-codec": "^0.2.1"
   },
   "devDependencies": {
