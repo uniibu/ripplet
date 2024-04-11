@@ -291,10 +291,12 @@ camelcase@^5.3.1:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
-centra@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/centra/-/centra-2.4.2.tgz#3bad51dbca2250dbecad84598dc7184973f4c4a9"
-  integrity sha512-f1RaP0V1HqVNEXfLfjNBthB2yy3KnSGnPCnOPCFLUk9e/Z4rNJ8nBaJNnghflnp88mi1IT8mfmW+HlMS1/H+bg==
+centra@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/centra/-/centra-2.7.0.tgz#4c8312a58436e8a718302011561db7e6a2b0ec18"
+  integrity sha512-PbFMgMSrmgx6uxCdm57RUos9Tc3fclMvhLSATYN39XsDV29B89zZ3KA89jmY0vwSGazyU+uerqwa6t+KaodPcg==
+  dependencies:
+    follow-redirects "^1.15.6"
 
 chalk@^3.0.0:
   version "3.0.0"
@@ -708,6 +710,11 @@ fill-range@^4.0.0:
     is-number "^3.0.0"
     repeat-string "^1.6.1"
     to-regex-range "^2.1.0"
+
+follow-redirects@^1.15.6:
+  version "1.15.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
+  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -1439,11 +1446,11 @@ path-to-regexp@^6.1.0:
   integrity sha512-h9DqehX3zZZDCEm+xbfU0ZmwCGFCAAraPJWMXJ4+v32NjZJilVg3k1TcKsRgIb8IQ/izZSaydDc1OhJCZvs2Dw==
 
 phin@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/phin/-/phin-3.5.0.tgz#f223aa26b22bb682b3eaf150ccb66c06998037b0"
-  integrity sha512-BEJYqD07B5uBFPAzNpLuLh0LzHr4MDLe0Vc6gBYi+PSIL57VbiE/UvkCc86x24pKQn2X2Keg7HTJEDr8BrBCCg==
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/phin/-/phin-3.7.1.tgz#bf841da75ee91286691b10e41522a662aa628fd6"
+  integrity sha512-GEazpTWwTZaEQ9RhL7Nyz0WwqilbqgLahDM3D0hxWwmVDI52nXEybHqiN6/elwpkJBhcuj+WbBu+QfT0uhPGfQ==
   dependencies:
-    centra "^2.4.2"
+    centra "^2.7.0"
 
 pify@^3.0.0:
   version "3.0.0"
